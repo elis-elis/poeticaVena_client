@@ -15,28 +15,40 @@ export default function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        
         try {
+            // Clear old tokens from localStorage and cookies
+            localStorage.removeItem('token');
+            localStorage.removeItem('refresh_token');
+            document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+            // Send login request
             const response = await api.post('/auth/login', {
                 email,
                 password,
             });
+
             const token = response.data.access_token;
 
-            // Stores the JWT token in localStorage
+            // Store the new JWT token in localStorage
             localStorage.setItem('token', token);
 
-            console.log('Volia! Login successful, token stored:', token);
-            // Redirect poet to homepage or another protected route
+            // Set the Authorization header for subsequent requests
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            console.log('Login successful, token stored:', token);
+
+            // Redirect user to homepage or another protected route
             router.push('/');
-            } catch (error) {
-            console.error('eeeee! Login failed:', error.response?.data || error.message);
-            alert('oops! Login failed. Please check your credentials.');
-            }
-        };
+        } catch (error) {
+            console.error('Login failed:', error.response?.data || error.message);
+            alert('Login failed. Please check your credentials.');
+        }
+    };
 
     return (
         <div>
-            <h1>login, gently, but confidently</h1>
+            <h1>Login, gently, but confidently</h1>
             <form onSubmit={handleLogin}>
                 <input
                     type="email"
@@ -50,7 +62,7 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit">nigol</button>
+                <button type="submit">Login</button>
             </form>
         </div>
     );
