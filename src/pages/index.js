@@ -9,11 +9,11 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPoems = async () => {
       try {
-        const response = await api.get('/poems');
-        // const response = await api.get('/poems');
-        setPoems(response.data);
+        const response = await api.get('/all-poems');
+        console.log("✅ Poems fetched successfully:", response.data);
+        setPoems(response.data.poems);
       } catch (error) {
-        console.error('ouch! Failed to fetch poems:', error.response?.data || error.message);
+        console.error('❌ ouch! Failed to fetch poems:', error.response ? error.response.data : error.message);
       }
     };
     fetchPoems();
@@ -25,6 +25,11 @@ export default function HomePage() {
       nothing more, <br></br>
       nothing less.</h1>
       {poems ? <pre>{JSON.stringify(poems, null, 2)}</pre> : <p>Loading...</p>}
+      <button onClick={() => {
+          localStorage.removeItem('token');
+          document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+          console.log("Logged out, token cleared");
+      }}>Logout</button>
     </div>
   );
 }

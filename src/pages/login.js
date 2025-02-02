@@ -36,15 +36,13 @@ export default function Login() {
             // Set the Authorization header for subsequent requests
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            console.log('Login successful, token stored:', token);
-
-            // Redirect user to homepage or another protected route
+            console.log('✅ Login successful, token:', token);
             router.push('/');
-        } catch (error) {
-            console.error('Login failed:', error.response?.data || error.message);
-            alert('Login failed. Please check your credentials.');
-        }
-    };
+            } catch (error) {
+                console.error('❌ Login failed:', error.response ? error.response.data : error.message);
+                alert(`Login failed: ${error.response ? JSON.stringify(error.response.data) : error.message}`);
+            }
+        };
 
     return (
         <div>
